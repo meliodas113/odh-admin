@@ -1,16 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+import { Web3Provider } from "@/Providers/Web3provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -24,10 +15,26 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        {children}
+      <head>
+        <title>OddsHub | </title>
+        <meta
+          name="OddsHub | Your gateway to the future of prediction markets"
+          content="Your gateway to the future of prediction markets"
+        />
+        <link rel="icon" href="/assets/logos/oddshublogo.png" />
+      </head>
+      <body>
+        <Web3Provider>
+          <main
+            style={{
+              flex: "1",
+              width: "100%",
+              height: "100%",
+            }}
+          >
+            {children}
+          </main>
+        </Web3Provider>
       </body>
     </html>
   );
