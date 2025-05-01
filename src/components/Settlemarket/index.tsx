@@ -3,7 +3,6 @@ import { useState } from "react";
 import { Radio, RadioGroup } from "rsuite";
 import { useAccount, useSwitchChain } from "wagmi";
 import { ConnectKitButton } from "connectkit";
-import { Chain } from "viem";
 import { etherlink } from "viem/chains";
 
 const SettleMarkets = () => {
@@ -15,10 +14,8 @@ const SettleMarkets = () => {
   const [outcome, setOutcome] = useState<"Yes" | "No">("Yes");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSwitchNetwork = (
-    show: (() => void) | undefined,
-    chain: Chain | any
-  ) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleSwitchNetwork = (show: (() => void) | undefined, chain: any) => {
     if (show) show();
     if (chain?.id !== etherlink.id) {
       switchChain({ chainId: etherlink.id });

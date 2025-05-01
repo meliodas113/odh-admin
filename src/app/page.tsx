@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useAccount } from "wagmi";
 import useCreateMarket from "@/hooks/useCreateMarket";
 import "rsuite/dist/rsuite-no-reset.min.css";
-import Box from "@mui/material/Box";
 import Select from "react-select";
 import { DatePicker } from "rsuite";
 import { colorStyles } from "@/constants/contract";
