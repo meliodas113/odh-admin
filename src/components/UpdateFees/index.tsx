@@ -14,7 +14,6 @@ export const UpdateFeesComp = () => {
     const newFees = Number(fees);
     try {
       const result = await updateFees(newFees);
-      console.log("Adding admin with address:", result);
     } catch (error) {
       console.error("Error adding admin:", error);
     }
@@ -54,7 +53,7 @@ export const UpdateFeesComp = () => {
                   : "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               }`}
             >
-              {isLoading ? "Processing..." : "Add Admin"}
+              {isLoading ? "Processing..." : "Update Fees"}
             </button>
           ) : (
             <button
@@ -66,7 +65,7 @@ export const UpdateFeesComp = () => {
                   : "bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
               }`}
             >
-              {isLoading ? "Processing..." : "Add Admin"}
+              {isLoading ? "Processing..." : "Connect Wallet"}
             </button>
           )}
         </div>
