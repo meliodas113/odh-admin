@@ -1,26 +1,16 @@
 import useSettleMarket from "@/hooks/useSettleMarket";
 import { useState } from "react";
 import { Radio, RadioGroup } from "rsuite";
-import { useAccount, useSwitchChain } from "wagmi";
-import { ConnectKitButton } from "connectkit";
-import { etherlink } from "viem/chains";
+import { useAccount} from "wagmi";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 const SettleMarkets = () => {
   const { address } = useAccount();
-  const { switchChain } = useSwitchChain();
   const { settleMarket } = useSettleMarket();
 
   const [marketId, setMarketId] = useState<number | null>(null);
   const [outcome, setOutcome] = useState<"Yes" | "No">("Yes");
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleSwitchNetwork = (show: (() => void) | undefined, chain: any) => {
-    if (show) show();
-    if (chain?.id !== etherlink.id) {
-      switchChain({ chainId: etherlink.id });
-    }
-  };
 
   const handleSettleMarket = async () => {
     if (!marketId || marketId <= 0) {
@@ -90,29 +80,16 @@ const SettleMarkets = () => {
             {isSubmitting ? "Submitting..." : "Settle Market"}
           </button>
         ) : (
-          <ConnectKitButton.Custom>
-            {({ isConnected, show, address, chain }) => {
-              const displayAddress = address
-                ? `${address.slice(0, 6)}...${address.slice(-4)}`
-                : "Connect Wallet";
-
-              return (
-                <button
-                  onClick={() => handleSwitchNetwork(show, chain)}
-                  className={`relative min-w-[10rem] px-5 py-2.5 text-sm font-semibold rounded-xl transition-all duration-200 overflow-hidden shadow-md ${
-                    isConnected
-                      ? "bg-[#10b981] hover:bg-[#059669]"
-                      : "bg-[#3b82f6] hover:bg-[#2563eb]"
-                  } text-white`}
-                >
-                  <span className="relative z-10">
-                    {isConnected ? displayAddress : "Connect Wallet"}
-                  </span>
-                  <span className="absolute inset-0 -left-full w-full h-full bg-gradient-to-r from-transparent via-white/10 to-transparent transition-all duration-500 group-hover:left-full" />
-                </button>
-              );
-            }}
-          </ConnectKitButton.Custom>
+          <ConnectButton.Custom>
+          {({ openConnectModal }) => (
+            <button
+              onClick={openConnectModal}
+              className="bg-blue-900 text-blue-100 rounded-full px-4 py-2 font-semibold hover:bg-blue-600"
+            >
+              Connect Wallet
+            </button>
+          )}
+        </ConnectButton.Custom>
         )}
       </div>
     </div>

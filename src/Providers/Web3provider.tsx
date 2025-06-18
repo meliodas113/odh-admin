@@ -1,21 +1,43 @@
 "use client";
-import { WagmiProvider, createConfig, http } from "wagmi";
+import { createConfig, WagmiProvider } from "wagmi";
 import { etherlink } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-
+import {
+  rabbyWallet,
+  metaMaskWallet,
+  coinbaseWallet,
+  walletConnectWallet,
+} from '@rainbow-me/rainbowkit/wallets';
+import { connectorsForWallets } from "@rainbow-me/rainbowkit";
+import '@rainbow-me/rainbowkit/styles.css';
+import { RainbowKitProvider } from "@rainbow-me/rainbowkit";
+import { http } from "wagmi";
 import { ReactNode } from "react";
-import { ConnectKitProvider, getDefaultConfig } from "connectkit";
+import { darkTheme } from "@rainbow-me/rainbowkit";
 
-export const config = createConfig(
-  getDefaultConfig({
-    chains: [etherlink],
-    transports: {
-      [etherlink.id]: http("https://node.mainnet.etherlink.com"),
+
+
+const connectors= connectorsForWallets(
+  [
+    {
+      groupName: 'Recommended',
+      wallets: [metaMaskWallet, rabbyWallet],
     },
-    walletConnectProjectId: "c0d339ed8343fed3a39dd6795c2244b8",
-    appName: "BaseForeCast",
-  })
+    {
+      groupName: 'Others',
+      wallets: [coinbaseWallet, walletConnectWallet],
+    },
+  ],
+  { appName: 'OddsHub', projectId: '4f47bd4a835b9acb58623c50fc5cb8fe' },
 );
+
+export const config = createConfig({
+   chains: [etherlink],
+   connectors,
+   transports:{
+    [etherlink.id]:http()
+   }
+});
 
 const queryClient = new QueryClient();
 
@@ -23,14 +45,19 @@ export const Web3Provider = ({ children }: { children: ReactNode }) => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <ConnectKitProvider
-          theme="midnight"
-          customTheme={{
-            "--ck-font-family": '"Comic Sans MS", "Comic Sans", cursive',
-          }}
-        >
-          {children}
-        </ConnectKitProvider>
+        <RainbowKitProvider
+          modalSize="compact"
+          theme={darkTheme({
+            accentColor: '#7b3fe4',
+            accentColorForeground: 'white',
+            borderRadius: 'small',
+            fontStack: 'system',
+            overlayBlur: 'small',
+          })}
+          initialChain={etherlink}
+          >
+            {children}
+          </RainbowKitProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

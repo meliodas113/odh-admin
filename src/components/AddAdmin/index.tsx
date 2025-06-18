@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useAccount } from "wagmi";
 import useAddAdmin from "@/hooks/useAddAdmin";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export const AddAdmin = () => {
   const [address, setAddress] = useState<string>("");
@@ -17,8 +18,11 @@ export const AddAdmin = () => {
     }
 
     try {
+      setIsLoading(true)
       const result = await addAdmin(address);
+      setIsLoading(false)
     } catch (error) {
+      setIsLoading(false)
       console.error("Error adding admin:", error);
     }
   };
@@ -48,18 +52,29 @@ export const AddAdmin = () => {
         </div>
 
         <div className="flex justify-center">
-          <button
+          {connectedAddress ? <button
             type="button"
             disabled={isLoading}
             onClick={handleAddAdmin}
-            className={`py-3 px-10 rounded-xl font-semibold transition-all duration-200 ${
-              isLoading
+            className={`py-3 px-10 rounded-xl font-semibold transition-all duration-200 ${isLoading
                 ? "bg-gray-300 text-gray-600 cursor-not-allowed"
                 : "bg-blue-600 text-white hover:bg-blue-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            }`}
+              }`}
           >
             {isLoading ? "Processing..." : "Add Admin"}
-          </button>
+            </button> 
+            :
+            <ConnectButton.Custom>
+              {({ openConnectModal }) => (
+                <button
+                  onClick={openConnectModal}
+                  className="bg-blue-900 text-blue-100 rounded-full px-4 py-2 font-semibold hover:bg-blue-600"
+                >
+                  Connect Wallet
+                </button>
+              )}
+            </ConnectButton.Custom>
+           }
         </div>
       </div>
     </div>

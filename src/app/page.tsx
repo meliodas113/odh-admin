@@ -12,6 +12,7 @@ import SettleMarkets from "@/components/Settlemarket";
 import { AddAdmin } from "@/components/AddAdmin";
 import { UpdateFeesComp } from "@/components/UpdateFees";
 import { RemoveMarketComp } from "@/components/RemoveMarket";
+import { ConnectButton } from "@rainbow-me/rainbowkit";
 
 export default function Home() {
   const [heading, setHeading] = useState("");
@@ -155,8 +156,6 @@ export default function Home() {
               />
             </div>
           </div>
-
-          {/* Image URL */}
           <div>
             <label className="block text-sm font-semibold text-gray-800 mb-2">
               Image URL
@@ -171,19 +170,31 @@ export default function Home() {
             />
           </div>
 
-          {/* Submit Button */}
           <div className="flex justify-center">
-            <button
-              disabled={!canCreate}
-              onClick={() => createMarket()}
-              className={`py-3 px-8 rounded-xl font-semibold transition-all duration-200 ${
-                canCreate
-                  ? "bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-md"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
-              }`}
-            >
-              {address ? "Create Market" : "Connect Wallet"}
-            </button>
+            {address ? (
+              <button
+                disabled={!canCreate}
+                onClick={() => createMarket()}
+                className={`py-3 px-8 rounded-xl font-semibold transition-all duration-200 ${
+                  canCreate
+                    ? "bg-indigo-600 text-white hover:bg-indigo-700 hover:shadow-md"
+                    : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                }`}
+              >
+                Create Market
+              </button>
+            ) : (
+              <ConnectButton.Custom>
+                {({ openConnectModal }) => (
+                  <button
+                    onClick={openConnectModal}
+                    className="bg-blue-900 text-blue-100 rounded-full px-4 py-2 font-semibold hover:bg-blue-600"
+                  >
+                    Connect Wallet
+                  </button>
+                )}
+              </ConnectButton.Custom>
+            )}
           </div>
         </div>
       )}
