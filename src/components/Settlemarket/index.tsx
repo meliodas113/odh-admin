@@ -3,12 +3,21 @@ import { useState } from "react";
 import { Radio, RadioGroup } from "rsuite";
 import { useAccount} from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
+import { abi } from "@/constants/abi";
+import { CONTRACT_ADDRESS } from "@/constants/contract";
+import { useReadContract } from "wagmi";
+import { Market } from "../RemoveMarket";
 
 const SettleMarkets = () => {
   const { address } = useAccount();
   const { settleMarket } = useSettleMarket();
-
   const [marketId, setMarketId] = useState<number | null>(null);
+  const { data: marketData, isLoading: isLoadingMarketData } = useReadContract({
+    abi,
+    address: CONTRACT_ADDRESS as `0x${string}`,
+    functionName: "getAllMarkets",
+    args: [],
+  });
   const [outcome, setOutcome] = useState<"Yes" | "No">("Yes");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -19,7 +28,6 @@ const SettleMarkets = () => {
     }
 
     setIsSubmitting(true);
-
     try {
       await settleMarket({
         marketId,
@@ -31,26 +39,35 @@ const SettleMarkets = () => {
       setIsSubmitting(false);
     }
   };
-
   return (
     <div className="w-full max-w-md mx-auto p-4">
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-1">
-          Market ID
-        </label>
-        <input
-          type="number"
-          className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          placeholder="Enter market ID"
-          value={marketId ?? ""}
-          onChange={(e) => {
-            const val = parseInt(e.target.value);
-            setMarketId(isNaN(val) ? null : val);
-          }}
-        />
-      </div>
+          <label
+            htmlFor="market-select"
+            className="block text-sm font-medium text-gray-700 mb-1"
+          >
+            Select Market:
+          </label>
+          <select
+            id="market-select"
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            value={marketId as number}
+            onChange={(e) => setMarketId(Number(e.target.value))}
+            disabled={isLoadingMarketData}
+          >
+            <option value="">-- Select a Market --</option>
+            {!isLoadingMarketData &&
+              Array.isArray(marketData) &&
+              marketData.filter((item:Market)=> item.question!=="none" && Number(item.endTime) < Math.floor((new Date().getTime())/1000)).map((market: Market, index: number) => (
+                <option key={index} value={index}>
+                  {`${market.question || "Untitled"}`}
+                </option>
+              ))}
+          </select>
+        </div>
 
-      <div className="mb-6">
+     {!isLoadingMarketData &&
+     Array.isArray(marketData) && marketData.filter((item:Market)=> item.question!=="none" && Number(item.endTime) < Math.floor((new Date().getTime())/1000)).length > 0 &&  <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-1">
           Winning Outcome
         </label>
@@ -63,7 +80,7 @@ const SettleMarkets = () => {
           <Radio value="Yes">Yes</Radio>
           <Radio value="No">No</Radio>
         </RadioGroup>
-      </div>
+      </div>}
 
       <div className="flex justify-center mt-8">
         {address ? (

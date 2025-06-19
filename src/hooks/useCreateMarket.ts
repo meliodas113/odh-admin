@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useState } from "react";
 import { useWriteContract } from "wagmi";
 import { CONTRACT_ADDRESS } from "@/constants/contract";
@@ -21,12 +22,9 @@ function useCreateMarket({
   deadline,
 }: Data) {
   const [enableQuery, setEnableQuery] = useState(false);
-  const { writeContract, data, error: contractError } = useWriteContract();
+  const { writeContract, data } = useWriteContract();
 
   const timeleft = Math.floor((deadline - new Date().getTime()) / 1000);
-  console.log(new Date().getTime());
-  console.log(timeleft, deadline);
-  console.log(contractError, enableQuery);
 
   const createMarket = async () => {
     try {

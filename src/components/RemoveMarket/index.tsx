@@ -2,19 +2,42 @@ import { useState } from "react";
 import { useAccount } from "wagmi";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import useSettleMarket from "@/hooks/useSettleMarket";
+import { abi } from "@/constants/abi";
+import { useReadContract } from "wagmi";
+import { CONTRACT_ADDRESS } from "@/constants/contract";
+
+
+export interface Market {
+  question: string;
+  optionA: string;
+  optionB: string;
+  endTime: string;
+  outcome: string;
+  totalOptionAShares: number;
+  totalOptionBShares: number;
+  resolved: boolean;
+}
 
 export const RemoveMarketComp = () => {
   const [id, setId] = useState<string>("");
   const { address: connectedAddress } = useAccount();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const { removeMarket } = useSettleMarket();
+
+  const { data: marketData, isLoading: isLoadingMarketData } = useReadContract({
+    abi,
+    address: CONTRACT_ADDRESS as `0x${string}`,
+    functionName: "getAllMarkets",
+    args: [],
+  });
+
+
   const handleUpdateFees = async () => {
     const MarketId = Number(id);
     try {
       setIsLoading(true)
-      const result = await removeMarket({ marketId: MarketId });
+     await removeMarket({ marketId: MarketId });
       setIsLoading(false)
-      console.log("Adding admin with address:", result);
     } catch (error) {
       setIsLoading(false)
       console.error("Error adding admin:", error);
@@ -23,24 +46,32 @@ export const RemoveMarketComp = () => {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <div className="bg-white rounded-lg shadow-md p-6">
+      <div className="rounded-lg shadow-md p-6 w-[600px] border-2 border-black">
         <h2 className="text-xl font-bold text-gray-800 mb-6">Remove Market</h2>
 
         <div className="mb-6">
           <label
-            htmlFor="admin-address"
+            htmlFor="market-select"
             className="block text-sm font-medium text-gray-700 mb-1"
           >
-            Market Id:
+            Select Market:
           </label>
-          <input
-            id="admin-address"
-            type="text"
+          <select
+            id="market-select"
             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="Enter Market Id"
             value={id}
             onChange={(e) => setId(e.target.value)}
-          />
+            disabled={isLoadingMarketData}
+          >
+            <option value="">-- Select a Market --</option>
+            {!isLoadingMarketData &&
+              Array.isArray(marketData) &&
+              marketData.filter((item:Market)=> item.question!=="none").map((market: Market, index: number) => (
+                <option key={index} value={index}>
+                  {`${market.question || "Untitled"}`}
+                </option>
+              ))}
+          </select>
         </div>
 
         <div className="flex justify-center">
