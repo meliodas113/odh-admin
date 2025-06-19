@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-export const CONTRACT_ADDRESS = "0x2dcfe33d4797415c9775c9e7a7a59d77708b3da1";
+export const CONTRACT_ADDRESS = "0x4eA0A867d0A0806be2e2c370f8e0B0472efC0b84";
 export const tokenAddress = "0x2dcfe33d4797415c9775c9e7a7a59d77708b3da1";
 
 export const colorStyles = {
